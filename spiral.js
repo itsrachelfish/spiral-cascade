@@ -47,5 +47,81 @@ $(document).ready(function()
         });
     });
 
+    $('body').on('click', '#edge', function()
+    {
+        var cascade = {top: [], bottom: [], left: [], right: []};
+
+        // Hide everything
+        $('.cascade').css({opacity: 0});
+        
+        $('.cascade').each(function()
+        {
+            var offset = $(this).offset();
+
+            // Top row!
+            if(offset.top < 200)
+            {
+                cascade.top.push({element: $(this), distance: offset.left});
+            }
+
+            // Right row!
+            else if($('body').width() - offset.left < 200)
+            {
+                cascade.right.push({element: $(this), distance: offset.top})
+            }
+
+            // Bottom row!
+            else if($('body').height() - offset.top < 200)
+            {
+                cascade.bottom.push({element: $(this), distance: Math.abs(offset.left - $('body').width())});
+            }
+
+            // Left row!
+            else if(offset.left < 200)
+            {
+                cascade.left.push({element: $(this), distance: Math.abs(offset.top - $('body').height())});
+            }
+        });
+
+        function compare(a,b) {
+          if (a.distance < b.distance)
+             return -1;
+          if (a.distance > b.distance)
+            return 1;
+          return 0;
+        }
+
+        cascade.top.sort(compare);
+        cascade.right.sort(compare);
+        cascade.bottom.sort(compare);
+        cascade.left.sort(compare);
+
+        cascade.delay = 50;
+        
+        $.each(cascade.top, function(index, object)
+        {
+            object.element.show().css({opacity: 0}).delay(cascade.delay).animate({opacity: 1});
+            cascade.delay += 50;
+        });
+
+        $.each(cascade.right, function(index, object)
+        {
+            object.element.show().css({opacity: 0}).delay(cascade.delay).animate({opacity: 1});
+            cascade.delay += 50;
+        });
+
+        $.each(cascade.bottom, function(index, object)
+        {
+            object.element.show().css({opacity: 0}).delay(cascade.delay).animate({opacity: 1});
+            cascade.delay += 50;
+        });
+
+        $.each(cascade.left, function(index, object)
+        {
+            object.element.show().css({opacity: 0}).delay(cascade.delay).animate({opacity: 1});
+            cascade.delay += 50;
+        });
+    });
+
     $('.cascade').draggable();
 });
